@@ -61,32 +61,45 @@ class WinePricePredictor:
         print(df)
 
 class WinePriceModel:
+    """Esta clase define la interfaz que debe ser implementada por un modelo."""
 
     def preprocess_dataset(self, dataset):
+        """Recibe como parametro un dataset del tipo pandas.DataFrame
+        y lo procesa antes de ser utilizado."""
         pass
 
     def preprocess_x(self, dataset):
+        """Recibe como parametro una set de entrada X del tipo pandas.DataFrame
+          y lo procesa antes de ser predecido"""
         pass
 
     def fit(self, x_df, y_df):
+        """Entrena el modelo partiendo de dos pandas.DataFrame x_df e y_df."""
         pass
 
     def predict(self, x_df):
+        """Retorna la predicción para las entradas en el pandas.DataFrame x_df."""
         pass
 
-class KNeighborsMode(WinePriceModel):
+class EncodedWinePriceModel(WinePriceModel):
+    """Esta es una clase de modelo abstracta que agrega la capacidad de manejar 
+    encoding por columnas. El encoder implementado es LabelEncoder el cual genera
+    a partir N diferentes clases de valores, sus correspondientes valores numericos
+    desde 0 a N-1."""
     
     def __init__(self):
-        self.model = neighbors.KNeighborsRegressor(3, weights="distance")
+        self.model = None
         self.encoders = {}
-    
+
     def transform_label_column(self, column_name, dataset):
+        """Aplica el enconder asociado a la columna column_name en el dataset."""
         le = self.encoders[column_name]
         dataset[column_name] =  dataset[column_name].apply(str)
         dataset[column_name] = le.transform(dataset[column_name].values)
         return dataset
         
     def fit_and_transform_label_column(self, column_name, dataset):
+        """Procesa una columna del dataset utilizando un LabelEncoder."""
         le = None
         if column_name in self.encoders:
             le = self.encoders[column_name]
@@ -97,6 +110,12 @@ class KNeighborsMode(WinePriceModel):
         vals = dataset[column_name].values
         le.fit(vals)
         return self.transform_label_column(column_name, dataset)
+
+class KNeighborsMode(EncodedWinePriceModel):
+    
+    def __init__(self):
+        super().__init__()
+        self.model = neighbors.KNeighborsRegressor(3, weights="distance")
 
     def preprocess_dataset(self, dataset):
         self.fit_and_transform_label_column('country', dataset)
@@ -129,7 +148,7 @@ if __name__ == "__main__":
         metrics_dict['mae'],
         metrics_dict['mse'],
         metrics_dict['evs']))
-    #predictor.print_real_pred()
+    predictor.print_real_pred()
     X = {'country': ['Australia'],
         'description': ['Starts off with grassy, fresh herbal aromas and flavors of almond. After a second look, it''s all lemon and grapefruit flavors, with an edge of sweetness—almost like a lemon tart. Slim in size, soft in feel. An easy quaff.'],
         'designation': ['Zeepaard'],
