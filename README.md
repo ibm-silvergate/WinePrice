@@ -70,7 +70,7 @@ class WinePriceModel:
 
 ## Encoding
 
-La siguiente clase permita manejar la codificación de columnas del tipo texto, por ejemplo si consideramos la columna "country", tal cual como está no puede ser ingresa a un modelo de regresión, previamente debe ser transformada en un valor númerico. El encoder utilizado por este clase le asigna un valor en el rango [0, N-1] a las N clases de una columna.
+La siguiente clase permita manejar la codificación de columnas del tipo texto, por ejemplo si consideramos la columna "country" tal cual como está no puede ser ingresa a un modelo de regresión sino que previamente debe ser transformada en un valor númerico. El encoder utilizado por este clase le asigna un valor en el rango [0, N-1] a las N clases de una columna.
 Adicionales encoders puedes ser considerados y agregados por cada modelo.
 
 ```python
